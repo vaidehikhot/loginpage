@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/a692e1c39f.js" crossorigin="anonymous"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+<body>
+    <div class="container">
+        <div class="weather__header">
+            <form class="weather__search" onsubmit="getWeather(event)">
+                <input type="text" placeholder="Search for a city..." class="weather__searchform">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </form>
+            <div class="weather__units">
+                <span class="weather_unit_celsius">&#176C</span>
+                <span class="weather_unit_farenheit">&#176F</span>
+            </div>
+        </div>
+        <div class="weather__body">
+            <h1 class="weather__city"></h1>
+            <div class="weather__datetime"></div>
+            <div class="weather__forecast"></div>
+            <p class="weather__temperature"></p>
+            <div class="weather__minmax"></div>
+        </div>
+        <div class="weather__info">
+            <div class="weather__card"><i class="fa-solid fa-temperature-full"></i>
+                <p>Real Feel: <span class="weather__realfeel">18&#176</span></p>
+            </div>
+            <div class="weather__card"><i class="fa-solid fa-droplet"></i>
+                <p>Humidity: <span class="weather__humidity">18&#176</span></p>
+            </div>
+            <div class="weather__card"><i class="fa-solid fa-wind"></i>
+                <p>Wind: <span class="weather__wind">18&#176</span></p>
+            </div>
+            <div class="weather__card"><i class="fa-solid fa-gauge-high"></i>
+                <p>Pressure: <span class="weather__pressure">18&#176</span></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        const API_KEY = '64f60853740a1ee3ba20d0fb595c97d5';
+let units = "metric";
+
+
+document.querySelector(".weather__search").addEventListener('submit', event => {
+    event.preventDefault();
+    getWeather();
+});
+
+function getWeather() {
+    const city = document.querySelector(".weather__searchform").value || "Mumbai";
+    
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=${units}`)
+        .then(response => response.json())
+        .then(data => {
+            document.querySelector(".weather__city").textContent = `${data.name}, ${data.sys.country}`;
+            document.querySelector(".weather__datetime").textContent = new Date(data.dt * 1000).toLocaleString();
+            document.querySelector(".weather__forecast").textContent = data.weather[0].main;
+            document.querySelector(".weather__temperature").innerHTML = `${data.main.temp.toFixed()}&#176`;
+            document.querySelector(".weather__minmax").innerHTML = `Min: ${data.main.temp_min.toFixed()}&#176 / Max: ${data.main.temp_max.toFixed()}&#176`;
+            document.querySelector('.weather__realfeel').textContent = `${data.main.feels_like.toFixed()}Â°`;
+            document.querySelector('.weather__humidity').textContent = `${data.main.humidity}%`;
+            document.querySelector('.weather__wind').textContent = `${data.wind.speed} ${units === "imperial" ? "mph" : "m/s"}`;
+            document.querySelector('.weather__pressure').textContent = `${data.main.pressure} hPa`;
+        })
+        .catch(error => console.error("Error fetching weather data:", error));
+}
+
+window.onload = getWeather;
+    </script>
+</body>
+
+</html>
