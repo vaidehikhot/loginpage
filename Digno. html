@@ -3,80 +3,7 @@
 <head>
     <title>Chrome Dino</title>
 </head>
-<style>
-body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: #020216;
-}
-.dino-game {
-    width: 600px;
-    height: 219px;
-    border: 1px solid #00f1f1;
-    border-radius: 11px;
-    margin: auto;
-    position: relative;
-}
-#dino {
-    width: 72px;
-    height: 67px;
-    position: absolute;
-    bottom: -11px;
-    left: 13px;
-}
-#cactus {
-    width: 35px;
-    height: 57px;
-    position: absolute;
-    bottom: -10px;
-    right: 0;
-}
-.move-cactus {
-    animation: block 1.5s infinite linear;
-}
-
-@keyframes block {
-  0% {
-    right: 0;
-  }
-  100% {
-    right: 600px;
-  }
-}
-.jump {
-  animation: jump 0.5s linear;
-}
-@keyframes jump {
-  0% {
-    bottom: 0;
-  }
-  50% {
-    bottom: 80px;
-  }
-  100% {
-    bottom: 0;
-  }
-}
-#score {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 50px;
-    height: 30px;
-    text-align: center;
-    font-size: 16px;
-    color: #ffffff;
-    background-color: #020216;
-    border: 1px solid #00f1f1;
-    border-radius: 5px;
-}
-
-
-</style>
-<body>
-    <div class="dino-game">
+<div class="dino-game">
       <input type="text" id="score" value="0" readonly />
         <!-- Inline SVG for Dino -->
         <div id="dino">
@@ -102,3 +29,35 @@ function jump() {
     dino.classList.add("jump");
     setTimeout(() => dino.classList.remove("jump"), 500);
   }
+}
+
+function startGame() {
+  gameStarted = true;
+  score = 0;
+  scoreInput.value = score;
+  cactus.classList.add("move-cactus");
+
+  scoreInterval = setInterval(() => {
+    if (gameStarted) scoreInput.value = ++score;
+  }, 1000);
+
+  setInterval(() => {
+    if (!gameStarted) return;
+    const dinoBottom = parseInt(getComputedStyle(dino).bottom),
+          cactusRight = parseInt(getComputedStyle(cactus).right);
+    if (cactusRight > 500 && cactusRight < 600 && dinoBottom <= 10) {
+      alert("Game Over!");
+      gameStarted = false;
+      cactus.classList.remove("move-cactus");
+      clearInterval(scoreInterval);
+    }
+  }, 10);
+}
+
+document.addEventListener("keydown", () => {
+  if (!gameStarted) startGame();
+  jump();
+});
+
+</script>
+</html>
